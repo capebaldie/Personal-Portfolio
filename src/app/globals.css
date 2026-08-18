@@ -1,0 +1,407 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------
+   Theme — docs structure, editorial voice.
+
+   The whole point of this design is that it borrows the *layout* of a
+   documentation site (persistent sidebar, deep-linkable sections, dense
+   information) but refuses its *typography*. Docs sites are 14px Inter,
+   grey on white. This is a display face at a size no docs theme would use,
+   over an 18px body at a real reading measure.
+
+   "Graphite & Signal": a cool near-neutral ground with one electric blue.
+   Deliberately *not* warm paper with a clay accent — that combination is
+   Anthropic's brand system and the site read as a copy of it.
+
+   Light and dark are tuned separately, not inverted. Toggled via
+   [data-theme] on <html> by the no-flash script in layout.tsx.
+----------------------------------------------------------------- */
+:root {
+  --background: #fbfbfc; /* cool near-white, a hair off #fff */
+  --surface: #f0f1f3; /* sidebar + chips */
+  --foreground: #101113; /* 18.3:1 — this is what body copy uses */
+  --muted: #54575e; /* 7.0:1 — metadata only, never body copy */
+  /* 5.7:1 — a touch darker than it needs to be on its own, because the grain
+     overlay composites everything toward mid-grey and eats ~0.6 of the ratio.
+     At the original #2F5FF0 this pairing landed on 4.5 with no headroom. */
+  --accent: #2b57e0;
+  --line: rgba(16, 17, 19, 0.13);
+  --ok: #15803d;
+  /* Contribution graph scale, five steps from "no activity" to "busiest".
+     On a light ground the scale runs darker as activity rises. */
+  --chart-0: #e7e9ed;
+  --chart-1: #b9c8ff;
+  --chart-2: #7c9bff;
+  --chart-3: #2b57e0;
+  --chart-4: #1c3a9c;
+}
+
+:root[data-theme="dark"] {
+  --background: #0c0d0f;
+  --surface: #15171a;
+  --foreground: #e9eaec; /* 16.2:1 */
+  --muted: #969aa3; /* 6.9:1 */
+  --accent: #7c9bff; /* 7.4:1 — lifted for the dark ground */
+  --line: rgba(233, 234, 236, 0.14);
+  --ok: #4ade80;
+  /* Inverted on dark: brightness has to rise with activity, or the busiest
+     days would be the ones that disappear into the ground. */
+  --chart-0: #1a1d22;
+  --chart-1: #23386e;
+  --chart-2: #2b57e0;
+  --chart-3: #5e8aff;
+  --chart-4: #a9c2ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-line: var(--line);
+  --color-ok: var(--ok);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display-face);
+  --font-mono: var(--font-code);
+}
+
+/* ---- Display face ----
+   Bricolage Grotesque replaces the old display serif, which shipped a single
+   400 weight and went spindly above ~32px. A grotesque at display size needs
+   the tracking pulled in; the serif didn't.
+
+   Deliberately a class of its own rather than extra rules hung on Tailwind's
+   generated `font-display` utility, and deliberately inside @layer components
+   so a `font-normal` or `tracking-*` utility alongside it still wins — an
+   unlayered rule would silently outrank every utility used next to it. */
+@layer components {
+  .display {
+    font-family: var(--font-display-face), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  /* ---- Section heading marker ----
+     One highlighter pass. A border-radius can only ever draw a capsule, so the
+     ragged edge comes from a jittered clip-path instead — the gradient varies
+     the ink density along the sweep, the ends are cut on the slant a chisel tip
+     leaves, and the tail runs thinner than the head where the pen lifts.
+     Two passes, the way a marker actually covers a word: a lighter upper sweep
+     over the top of the caps, the main one below it. Where they cross, the two
+     translucent fills composite darker on their own — that seam is what sells
+     it as ink rather than as a shape. The angles differ by well under a degree;
+     any more and the second pass reads as a stray mark instead of emphasis. */
+  .section-heading {
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+    padding: 0 0.12em;
+  }
+
+  .section-heading::before {
+    content: "";
+    position: absolute;
+    left: -0.16em;
+    right: -0.24em;
+    top: 0.26em;
+    bottom: 0.02em;
+    z-index: -1;
+    pointer-events: none;
+    transform: rotate(-1.2deg);
+    background: linear-gradient(
+      98deg,
+      color-mix(in srgb, var(--accent) 32%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 19%, transparent) 18%,
+      color-mix(in srgb, var(--accent) 29%, transparent) 44%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 68%,
+      color-mix(in srgb, var(--accent) 27%, transparent) 88%,
+      color-mix(in srgb, var(--accent) 12%, transparent) 100%
+    );
+    clip-path: polygon(
+      2% 14%,
+      14% 5%,
+      31% 11%,
+      48% 4%,
+      66% 10%,
+      82% 5%,
+      95% 12%,
+      100% 27%,
+      99% 73%,
+      92% 93%,
+      77% 87%,
+      59% 96%,
+      41% 88%,
+      24% 97%,
+      10% 90%,
+      0% 96%,
+      1% 46%
+    );
+  }
+
+  .section-heading::after {
+    content: "";
+    position: absolute;
+    left: -0.1em;
+    right: -0.3em;
+    top: 0.12em;
+    bottom: 0.6em;
+    z-index: -1;
+    pointer-events: none;
+    transform: rotate(-1.9deg);
+    background: linear-gradient(
+      94deg,
+      color-mix(in srgb, var(--accent) 19%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 10%, transparent) 38%,
+      color-mix(in srgb, var(--accent) 17%, transparent) 71%,
+      color-mix(in srgb, var(--accent) 6%, transparent) 100%
+    );
+    clip-path: polygon(
+      3% 20%,
+      27% 6%,
+      54% 17%,
+      78% 5%,
+      97% 19%,
+      100% 61%,
+      88% 89%,
+      63% 96%,
+      36% 84%,
+      12% 95%,
+      0% 77%
+    );
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Tailwind v4's preflight dropped the old `cursor: pointer` on buttons, so
+   every button here would otherwise render with an arrow. */
+button {
+  cursor: pointer;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+  /* Inherited, so body is enough — on `*` this cost a pass per element.
+     `text-rendering: optimizeLegibility` was dropped with it: nothing here
+     needs it over the default, and it's the more expensive of the two. */
+  -webkit-font-smoothing: antialiased;
+  /* 18px body. Docs sites run 14–16px because they optimise for scanning;
+     this one optimises for actually being read. */
+  font-size: 1.125rem;
+  line-height: 1.7;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+/* ---- Grain ----
+   A single fixed tile of fractal noise over the whole viewport. The point is
+   to stop the flat ground reading as a blank canvas — at these opacities it
+   registers as paper stock, not as texture you'd name.
+
+   Generated by feTurbulence rather than shipped as an image, so it costs one
+   data URI and no network request. A 160px tile keeps the rasterisation cheap;
+   it sits above the fixed chrome so the surface is unbroken, and takes
+   pointer-events: none so it never intercepts a click.
+
+   Deliberately not animated. Flickering grain is a repaint of the full
+   viewport every frame, and on a reference document it reads as a gimmick. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Page chrome only. Unscoped, this also stripped the scrollbar from the
+   contribution graph's overflow-x container — the sole cue that 53 weeks of
+   cells scroll sideways on a phone. `scrollbar-width` covers Firefox, which
+   ignores ::-webkit-scrollbar entirely and so still drew one. */
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Lower on dark: mid-grey noise lifts a near-black ground far more than it
+   darkens a near-white one, and too much of it turns #0C0D0F grey. */
+:root[data-theme="dark"] body::after {
+  opacity: 0.045;
+}
+
+/* ---- Raised ----
+   A hard, blurless offset shadow — the same double-outline read as the ❏ box,
+   as depth instead of a glyph. Square corners keep it print, not app chrome.
+   Hover presses the element into its own shadow. */
+.raised {
+  --raise: var(--line);
+  box-shadow: 3px 3px 0 0 var(--raise);
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.raised:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--raise);
+}
+
+/* Loud variant — the shadow carries the accent instead of the hairline. */
+.raised-accent {
+  --raise: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .raised {
+    transition: none;
+  }
+  .raised:hover {
+    transform: none;
+  }
+}
+
+/* ---- Prose ----
+   Applied to the body copy inside each section. Deliberately narrow: a 68ch
+   measure is the single easiest way to look considered next to a docs theme,
+   which almost always runs its text too wide. */
+.prose {
+  max-width: 68ch;
+}
+
+.prose p + p {
+  margin-top: 1.1em;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+/* ---- Section anchors ----
+   Sections are deep-linked (/#experience) and the sidebar is sticky, so
+   scroll targets need headroom or the heading lands under the mobile bar. */
+.section-anchor {
+  scroll-margin-top: 6rem;
+}
+
+/* ---- Keyboard focus ---- */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---- Brand marks ----
+   Brand colour at rest. The two custom properties are set per-mark in
+   BrandMark.tsx; the dark one is already substituted for near-black brands
+   that would disappear here. */
+.brand {
+  color: var(--brand-l);
+}
+
+:root[data-theme="dark"] .brand {
+  color: var(--brand-d);
+}
+
+/* ---- Availability dot ----
+   Colour is never the only cue: the adjacent word says the same thing. */
+.status-dot {
+  position: relative;
+}
+
+.status-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--ok);
+  animation: status-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes status-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  /* Fades well before the loop ends, so there's a beat of stillness between
+     pings rather than a continuous throb. */
+  70%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* ---- Theme toggle: one bulb, lit or smashed ----
+   Follows [data-theme] directly, so the correct state is painted by the
+   no-flash script's attribute before React hydrates. Both branches are
+   complementary and one always matches, so the raw SVG defaults never show;
+   a missing attribute falls through to light, same as the script does. */
+.bulb-ray,
+.bulb-on,
+.bulb-off,
+.bulb-crack {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    stroke-dashoffset 0.4s ease;
+}
+
+/* Lit — filament whole, no crack */
+:root:not([data-theme="dark"]) .bulb-off {
+  opacity: 0;
+}
+:root:not([data-theme="dark"]) .bulb-crack {
+  opacity: 0;
+  stroke-dashoffset: 1; /* retracted, so switching back draws it on */
+}
+
+/* Out — filament snapped, glow pulled in, crack drawn */
+:root[data-theme="dark"] .bulb-on {
+  opacity: 0;
+}
+:root[data-theme="dark"] .bulb-ray {
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .bulb-ray,
+  .bulb-on,
+  .bulb-off,
+  .bulb-crack {
+    transition: none;
+  }
+  .status-dot::after {
+    animation: none;
+  }
+}
