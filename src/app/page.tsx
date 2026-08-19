@@ -96,7 +96,7 @@ export default function Home() {
     <div className="lg:pl-72">
       <Sidebar />
 
-      <main className="mx-auto max-w-3xl px-5 pt-10 pb-24 md:px-10">
+      <main className="mx-auto max-w-3xl px-5 pt-10 lg:pt-0 pb-24 md:px-10">
         <Section id="overview" title="Overview">
           <div className="prose">
             {/* The lede sits *under* the section heading in the hierarchy, so
@@ -227,15 +227,13 @@ export default function Home() {
                   itemClassName="stack-item raised flex items-center gap-2.5 border border-line p-2.5 text-sm"
                   items={group.items.map((item) => ({
                     key: item,
+                    mark: hasMark(item) ? <BrandMark name={item} size={18} /> : undefined,
                     node: (
-                      <>
-                        <BrandMark name={item} size={18} />
-                        {/* 18px mark + 10px gap — keeps markless items on the
-                            same text column as the rest of the grid. */}
-                        <span className={hasMark(item) ? "" : "pl-7"}>
-                          {item}
-                        </span>
-                      </>
+                      /* 18px mark + 10px gap — keeps markless items on the
+                         same text column as the rest of the grid. */
+                      <span className={hasMark(item) ? "" : "pl-7"}>
+                        {item}
+                      </span>
                     ),
                   }))}
                 />

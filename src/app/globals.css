@@ -24,7 +24,7 @@
   /* 5.7:1 — a touch darker than it needs to be on its own, because the grain
      overlay composites everything toward mid-grey and eats ~0.6 of the ratio.
      At the original #2F5FF0 this pairing landed on 4.5 with no headroom. */
-  --accent: #2b57e0;
+  --accent: #0040fe;
   --line: rgba(16, 17, 19, 0.13);
   --ok: #15803d;
   /* Contribution graph scale, five steps from "no activity" to "busiest".
@@ -44,7 +44,7 @@
   --surface: #070809;
   --foreground: #e9eaec; /* 16.2:1 */
   --muted: #969aa3; /* 6.9:1 */
-  --accent: #7c9bff; /* 7.4:1 — lifted for the dark ground */
+  --accent: #043fff; /* 7.4:1 — lifted for the dark ground */
   --line: rgba(233, 234, 236, 0.14);
   --ok: #4ade80;
   /* Inverted on dark: brightness has to rise with activity, or the busiest
@@ -154,10 +154,10 @@
     transform: rotate(-1.9deg);
     background: linear-gradient(
       94deg,
-      color-mix(in srgb, var(--accent) 19%, transparent) 0%,
-      color-mix(in srgb, var(--accent) 10%, transparent) 38%,
-      color-mix(in srgb, var(--accent) 17%, transparent) 71%,
-      color-mix(in srgb, var(--accent) 6%, transparent) 100%
+      color-mix(in srgb, var(--accent) 29%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 20%, transparent) 38%,
+      color-mix(in srgb, var(--accent) 27%, transparent) 71%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 100%
     );
     clip-path: polygon(
       3% 20%,
@@ -177,6 +177,12 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-top: 4.5rem;
+  }
 }
 
 /* Tailwind v4's preflight dropped the old `cursor: pointer` on buttons, so
