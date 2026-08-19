@@ -37,8 +37,11 @@
 }
 
 :root[data-theme="dark"] {
-  --background: #0c0d0f;
-  --surface: #15171a;
+  /* Ground dropped from #0C0D0F so the page reads as unlit rather than
+     dark-grey; --surface inherits that old value, which puts the sidebar at
+     the shade the active nav item used to sit at. */
+  --background: #030304;
+  --surface: #070809;
   --foreground: #e9eaec; /* 16.2:1 */
   --muted: #969aa3; /* 6.9:1 */
   --accent: #7c9bff; /* 7.4:1 — lifted for the dark ground */
@@ -242,7 +245,7 @@ body::-webkit-scrollbar {
 }
 
 /* Lower on dark: mid-grey noise lifts a near-black ground far more than it
-   darkens a near-white one, and too much of it turns #0C0D0F grey. */
+   darkens a near-white one, and too much of it turns the ground grey. */
 :root[data-theme="dark"] body::after {
   opacity: 0.045;
 }

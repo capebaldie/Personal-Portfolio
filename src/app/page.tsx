@@ -56,6 +56,23 @@ function ResumeLink() {
   );
 }
 
+/** Email leads, résumé follows in muted — the copy says email is the fastest
+ *  way to reach me, and two equally loud buttons would contradict it. */
+function ContactLinks({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex flex-wrap gap-3 ${className}`}>
+      <a
+        href={`mailto:${profile.email}`}
+        className="raised inline-flex items-center gap-2 border border-line px-4 py-2.5 text-accent hover:border-accent"
+      >
+        {profile.email}
+      </a>
+
+      <ResumeLink />
+    </div>
+  );
+}
+
 /** Tag rows carry a brand mark where one exists — "Zero-dep" and "TUI" aren't
  *  brands, so those render as plain text and the row absorbs it. */
 function TagRow({ tags }: { tags: string[] }) {
@@ -112,16 +129,7 @@ export default function Home() {
 
           {/* Up here because it's the first thing anyone hiring looks for —
               the copy in Contact still points at email as the way to reach me. */}
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href={`mailto:${profile.email}`}
-              className="raised inline-flex items-center gap-2 border border-line px-4 py-2.5 text-accent hover:border-accent"
-            >
-              {profile.email}
-            </a>
-
-            <ResumeLink />
-          </div>
+          <ContactLinks className="mt-8" />
 
           <ContributionGraph />
         </Section>
@@ -243,21 +251,8 @@ export default function Home() {
           </p>
 
           {/* Out of the display face: at 36px it fought the mono metadata
-              beside it, and a mail link is a control, not a headline.
-
-              The résumé sits beside it but in muted rather than accent — the
-              copy above says email is the fastest way to reach me, and two
-              equally loud buttons would contradict it. */}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href={`mailto:${profile.email}`}
-              className="raised inline-flex items-center gap-2 border border-line px-4 py-2.5 text-accent hover:border-accent"
-            >
-              {profile.email}
-            </a>
-
-            <ResumeLink />
-          </div>
+              beside it, and a mail link is a control, not a headline. */}
+          <ContactLinks className="mt-6" />
 
           <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm">
             {profile.socials.map((s) => (
