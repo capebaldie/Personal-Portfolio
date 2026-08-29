@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
 import type { ReactNode } from "react";
 
 /**
@@ -21,6 +22,10 @@ export function Section({
   children: ReactNode;
 }) {
   const reduceMotion = useReducedMotion();
+  // Flips once when the section reaches the viewport; CSS keys the heading's
+  // highlighter sweep off it. Also fires under reduced motion, where the
+  // sweep rules are inert and the marker just sits at rest.
+  const [seen, setSeen] = useState(false);
 
   const sectionVariants = {
     hidden: { opacity: 0 },
@@ -41,18 +46,21 @@ export function Section({
     <section
       id={id}
       aria-labelledby={`${id}-heading`}
-      className="section-anchor border-b border-line py-16 last:border-b-0 md:py-20"
+      className={`section-anchor border-b border-line py-16 last:border-b-0 md:py-20 ${
+        seen ? "marker-shown" : ""
+      }`}
     >
       <motion.div
         initial={reduceMotion ? false : "hidden"}
         whileInView={reduceMotion ? undefined : "shown"}
+        onViewportEnter={() => setSeen(true)}
         viewport={{ once: true, margin: "-80px" }}
         variants={sectionVariants}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       >
         <motion.h2
           id={`${id}-heading`}
-          className="section-heading display uppercase mb-8 text-[clamp(2.75rem,3.6vw,2.4rem)] leading-[1.1]"
+          className="section-heading display uppercase mb-8 text-[clamp(2.4rem,3.6vw,2.75rem)] leading-[1.1]"
           variants={headingVariants}
           transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
         >

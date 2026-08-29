@@ -15,14 +15,29 @@
  */
 export function ThemeToggle() {
   const toggle = () => {
-    const root = document.documentElement;
-    const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
-    root.setAttribute("data-theme", next);
-    try {
-      localStorage.setItem("theme", next);
-    } catch {
-      // Storage can be unavailable (private mode, disabled cookies) — the
-      // toggle still works for this visit, it just won't persist.
+    const apply = () => {
+      const root = document.documentElement;
+      const next =
+        root.getAttribute("data-theme") === "light" ? "dark" : "light";
+      root.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // Storage can be unavailable (private mode, disabled cookies) — the
+        // toggle still works for this visit, it just won't persist.
+      }
+    };
+
+    // The misprint glitch (globals.css) runs on view-transition snapshots, so
+    // the fixed chrome never re-lays-out mid-effect. Browsers without the API
+    // and anyone asking for reduced motion get the plain instant switch.
+    if (
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      document.startViewTransition(apply);
+    } else {
+      apply();
     }
   };
 
@@ -33,7 +48,9 @@ export function ThemeToggle() {
       aria-label="Toggle color theme"
       className="flex h-11 w-11 items-center justify-center text-muted transition-colors hover:text-foreground"
     >
+      {/* bulb-nudge: one-shot attention wiggle a beat after landing — globals.css */}
       <svg
+        className="bulb-nudge"
         width="18"
         height="18"
         viewBox="0 0 20 20"

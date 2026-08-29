@@ -90,7 +90,7 @@ function NavList({
       {nav.map((section) => (
         <div key={section.group ?? "root"} className="mb-7">
           {section.group && (
-            <p className="mb-2 px-3 font-mono text-[11px] tracking-wide text-muted">
+            <p className="mb-2 px-3 font-mono text-xs tracking-wide text-muted">
               {section.group}
             </p>
           )}
@@ -138,8 +138,16 @@ function NavList({
 }
 
 function Identity() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <div>
+    // Settles in just ahead of the lede's word stagger, so the landing reads
+    // name first, then what the name claims to do.
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    >
       <a href="#overview" className="display text-2xl leading-tight">
         {profile.name}
       </a>
@@ -153,7 +161,7 @@ function Identity() {
           Available for work
         </p>
       )}
-    </div>
+    </motion.div>
   );
 }
 

@@ -59,6 +59,36 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        {/* Channel-split filter for the theme-flip glitch: red pulled one way,
+            green+blue the other, recombined with screen — misregistered CMYK,
+            the Spider-Verse look. Referenced from globals.css keyframes only,
+            so it costs nothing at rest. */}
+        <svg aria-hidden="true" width="0" height="0" className="absolute">
+          <filter
+            id="rgb-split"
+            x="-10%"
+            y="-10%"
+            width="120%"
+            height="120%"
+            colorInterpolationFilters="sRGB"
+          >
+            <feColorMatrix
+              in="SourceGraphic"
+              type="matrix"
+              values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
+              result="r"
+            />
+            <feColorMatrix
+              in="SourceGraphic"
+              type="matrix"
+              values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+              result="gb"
+            />
+            <feOffset in="r" dx="5" dy="0" result="ro" />
+            <feOffset in="gb" dx="-5" dy="0" result="gbo" />
+            <feBlend in="ro" in2="gbo" mode="screen" />
+          </filter>
+        </svg>
         {children}
       </body>
     </html>

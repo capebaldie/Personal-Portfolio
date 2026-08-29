@@ -44,7 +44,7 @@
   --surface: #070809;
   --foreground: #e9eaec; /* 16.2:1 */
   --muted: #969aa3; /* 6.9:1 */
-  --accent: #043fff; /* 7.4:1 — lifted for the dark ground */
+  --accent: #5e8aff; /* 6.4:1 — lifted for the dark ground, same blue as --chart-3 */
   --line: rgba(233, 234, 236, 0.14);
   --ok: #4ade80;
   /* Inverted on dark: brightness has to rise with activity, or the busiest
@@ -80,7 +80,9 @@
    unlayered rule would silently outrank every utility used next to it. */
 @layer components {
   .display {
-    font-family: var(--font-display-face), Georgia, serif;
+    /* Sans fallback — Georgia was a leftover from the display serif this
+       face replaced, and a serif fallback is the wrong voice entirely. */
+    font-family: var(--font-display-face), system-ui, sans-serif;
     font-weight: 600;
     letter-spacing: -0.025em;
   }
@@ -172,6 +174,36 @@
       12% 95%,
       0% 77%
     );
+  }
+
+  /* ---- Marker draw-in ----
+     The sweep starts collapsed at the left edge and scales open once the
+     section reaches the viewport (Section.tsx flips .marker-shown), timed to
+     land just after the heading settles — the way a pen crosses a word that's
+     already on the page. The two passes are offset by a beat, main sweep
+     first, the lighter upper pass trailing it.
+
+     Gated to no-preference: reduced-motion users get the base rules above and
+     the marker simply sits at rest. scaleX(1) is the identity, so the resting
+     transforms here match the base rules exactly. */
+  @media (prefers-reduced-motion: no-preference) {
+    .section-heading::before,
+    .section-heading::after {
+      transform-origin: 0 50%;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    section:not(.marker-shown) .section-heading::before {
+      transform: rotate(-1.2deg) scaleX(0);
+    }
+    section:not(.marker-shown) .section-heading::after {
+      transform: rotate(-1.9deg) scaleX(0);
+    }
+    .marker-shown .section-heading::before {
+      transition-delay: 0.35s;
+    }
+    .marker-shown .section-heading::after {
+      transition-delay: 0.5s;
+    }
   }
 }
 
@@ -398,6 +430,109 @@ button:focus-visible,
 :root[data-theme="dark"] .bulb-ray {
   opacity: 0;
   transform: scale(0.4);
+}
+
+/* ---- Toggle nudge ----
+   One quiet rock of the bulb, once, four seconds in — after the landing
+   sequence has finished and the eye is free. It points at the control
+   without pre-firing its payload; the glitch stays discovered, not shown.
+   Origin sits at the screw base so it reads as loose in the socket. */
+@media (prefers-reduced-motion: no-preference) {
+  .bulb-nudge {
+    transform-origin: 50% 85%;
+    animation: bulb-nudge 0.9s ease-in-out 4s 1 both;
+  }
+}
+
+@keyframes bulb-nudge {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(-11deg);
+  }
+  35% {
+    transform: rotate(8deg);
+  }
+  55% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+/* ---- Theme-flip glitch ----
+   Spider-Verse misregistration, scoped to the one moment the bulb breaks.
+   ThemeToggle wraps the attribute swap in a view transition, so these rules
+   animate two flat *snapshots* — the outgoing theme on top, the incoming one
+   beneath — never the live DOM, which is what keeps the fixed sidebar and
+   grain overlay from re-laying-out mid-glitch.
+
+   steps(1, end) holds each frame and hard-cuts to the next: a glitch
+   interpolated smoothly is just a wobble. The old snapshot collapses into
+   jumping horizontal slices (the incoming theme shows through the gaps, so
+   the page reads as two prints out of register), with the #rgb-split channel
+   filter flickering on for two of the frames. The slices are partial-screen
+   and the whole run is 400ms — deliberately below anything that could read
+   as a photosensitive strobe.
+
+   No reduced-motion rules needed here: ThemeToggle never starts a view
+   transition for those users, so these pseudos simply never exist. */
+@keyframes glitch-slices {
+  0% {
+    clip-path: inset(0);
+  }
+  18% {
+    clip-path: inset(8% 0 64% 0);
+    transform: translateX(-10px);
+    filter: url(#rgb-split);
+  }
+  34% {
+    clip-path: inset(52% 0 22% 0);
+    transform: translateX(12px);
+  }
+  52% {
+    clip-path: inset(24% 0 46% 0);
+    transform: translateX(-7px) skewX(-0.6deg);
+    filter: url(#rgb-split);
+  }
+  70% {
+    clip-path: inset(78% 0 4% 0);
+    transform: translateX(8px);
+  }
+  86% {
+    clip-path: inset(38% 0 52% 0);
+    transform: translateX(-4px);
+  }
+  100% {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+@keyframes glitch-settle {
+  0% {
+    transform: translateX(6px);
+  }
+  40% {
+    transform: translateX(-4px);
+  }
+  70% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+  animation: glitch-slices 0.4s steps(1, end) both;
+}
+
+::view-transition-new(root) {
+  animation: glitch-settle 0.4s steps(1, end) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

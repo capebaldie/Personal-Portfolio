@@ -3,6 +3,7 @@ import { Section } from "@/components/Section";
 import { BrandMark, hasMark } from "@/components/BrandMark";
 import { Stagger } from "@/components/Stagger";
 import { ContributionGraph } from "@/components/ContributionGraph";
+import { Lede } from "@/components/Lede";
 import {
   about,
   experience,
@@ -102,9 +103,10 @@ export default function Home() {
             {/* The lede sits *under* the section heading in the hierarchy, so
                 it takes the display face at normal weight — at 600 it read
                 heavier than the h2 above it. */}
-            <p className="display text-[clamp(1.4rem,2.6vw,1.85rem)] leading-snug font-normal">
-              {profile.tagline}
-            </p>
+            <Lede
+              text={profile.tagline}
+              className="display text-[clamp(1.4rem,2.6vw,1.85rem)] leading-snug font-normal"
+            />
             <p className="mt-6">{about.lede}</p>
             {about.paragraphs.map((p) => (
               <p key={p}>{p}</p>
@@ -119,7 +121,7 @@ export default function Home() {
             ].map((f) => (
               <div
                 key={f.k}
-                className="flex flex-col border border-gray-300 dark:border-gray-600 p-4"
+                className="flex flex-col border border-line p-4"
               >
                 <dt className="font-mono text-xs text-muted">{f.k}</dt>
                 <dd className="mt-1">{f.v}</dd>
@@ -142,7 +144,7 @@ export default function Home() {
                 {/* Role title is a subtitle, not machine metadata — it reads
                     better in the body face than in mono. */}
                 <p className="mt-0.5 text-sm text-muted">{role.title}</p>
-                <Meta className={`mt-2 font-medium`}>{role.period}</Meta>
+                <Meta className="mt-2 font-medium">{role.period}</Meta>
 
                 <p className="prose mt-4">{role.blurb}</p>
 
@@ -194,7 +196,6 @@ export default function Home() {
                         <span className="sr-only">(opens in a new tab)</span>
                       </a>
                     </h3>
-                    {/* <Meta className={DATE_IN_MARGIN}>{p.year}</Meta> */}
                   </div>
                   <p className="prose mt-3">{p.detail}</p>
                   <TagRow tags={p.tags} />
