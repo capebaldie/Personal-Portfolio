@@ -231,10 +231,12 @@ body {
      `text-rendering: optimizeLegibility` was dropped with it: nothing here
      needs it over the default, and it's the more expensive of the two. */
   -webkit-font-smoothing: antialiased;
-  /* 18px body. Docs sites run 14–16px because they optimise for scanning;
-     this one optimises for actually being read. */
-  font-size: 1.125rem;
-  line-height: 1.7;
+  /* 18px body on desktop — docs sites run 14–16px because they optimise for
+     scanning, this one optimises for actually being read. Scaled down to 16px
+     on a phone: at 18px the body sat too close to the 24px subheads and the
+     whole column read as one block of text. */
+  font-size: clamp(1rem, 0.93rem + 0.3vw, 1.125rem);
+  line-height: 1.65;
   transition:
     background-color 0.25s ease,
     color 0.25s ease;
@@ -330,7 +332,14 @@ body::-webkit-scrollbar {
 }
 
 .prose p + p {
-  margin-top: 1.1em;
+  margin-top: 1.15em;
+}
+
+/* Secondary body copy — the summary line under a heading, where the detail
+   bullets below it are the thing to actually read. Lighter, not smaller: at
+   phone widths a size step here would collide with the metadata rows. */
+.prose-secondary {
+  color: var(--muted);
 }
 
 .prose a {

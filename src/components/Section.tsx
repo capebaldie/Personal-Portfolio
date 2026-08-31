@@ -60,7 +60,7 @@ export function Section({
       >
         <motion.h2
           id={`${id}-heading`}
-          className="section-heading display uppercase mb-8 text-[clamp(2.4rem,3.6vw,2.75rem)] leading-[1.1]"
+          className="section-heading display uppercase mb-10 lg:mb-12 text-[clamp(2.4rem,3.6vw,2.75rem)] leading-[1.1]"
           variants={headingVariants}
           transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
         >

@@ -214,7 +214,7 @@ export function Sidebar() {
         {/* The rail had ~400px of nothing between the nav and this row. The
             monogram gives the bottom of the column something to sit on. */}
         <div className="flex flex-col gap-5">
-          <Monogram />
+          {/* <Monogram /> */}
           <div className="flex items-center justify-between border-t border-line pt-4">
             <a
               href={`mailto:${profile.email}`}

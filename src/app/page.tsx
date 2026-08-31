@@ -105,7 +105,7 @@ export default function Home() {
                 heavier than the h2 above it. */}
             <Lede
               text={profile.tagline}
-              className="display text-[clamp(1.4rem,2.6vw,1.85rem)] leading-snug font-normal"
+              className="display text-[clamp(1.4rem,2.6vw,1.85rem)] leading-snug font-medium sm:font-normal"
             />
             <p className="mt-6">{about.lede}</p>
             {about.paragraphs.map((p) => (
@@ -119,10 +119,7 @@ export default function Home() {
               { k: "Based", v: profile.location },
               { k: "Shipping since", v: "2023" },
             ].map((f) => (
-              <div
-                key={f.k}
-                className="flex flex-col border border-line p-4"
-              >
+              <div key={f.k} className="flex flex-col border border-line p-4">
                 <dt className="font-mono text-xs text-muted">{f.k}</dt>
                 <dd className="mt-1">{f.v}</dd>
               </div>
@@ -137,24 +134,38 @@ export default function Home() {
         </Section>
 
         <Section id="experience" title="Experience">
-          <div className="space-y-12">
+          {/* A hairline between roles. On a phone the entries stacked into one
+              continuous column of text and the only cue that a new job had
+              started was a slightly larger line. */}
+          <div className="divide-y divide-line [&>*+*]:pt-12">
             {experience.map((role) => (
-              <article key={role.company} className="relative">
-                <h3 className="display text-2xl">{role.company}</h3>
+              <article key={role.company} className="relative pb-12 last:pb-0">
+                <h3 className="display text-[1.7rem] leading-tight sm:text-3xl">
+                  {role.company}
+                </h3>
                 {/* Role title is a subtitle, not machine metadata — it reads
                     better in the body face than in mono. */}
                 <p className="mt-0.5 text-sm text-muted">{role.title}</p>
                 <Meta className="mt-2 font-medium">{role.period}</Meta>
 
-                <p className="prose mt-4">{role.blurb}</p>
+                {/* Muted: this is the summary, the bullets under it are the
+                    substance. Same size, one shade back. */}
+                <p className="prose prose-secondary mt-4">{role.blurb}</p>
 
                 {role.detail.length > 0 && (
                   <ul className="prose mt-4 space-y-2">
                     {role.detail.map((d) => (
                       <li key={d} className="flex gap-3">
-                        <span aria-hidden="true" className="text-accent">
-                          ❏
-                        </span>
+                        {/* The ❏ glyph, drawn instead of typed: a square with
+                            a hard offset shadow — the same double-outline read
+                            as .raised. A box aligns to the text baseline on
+                            its own margin, where the character's size and
+                            position depended on whichever font actually
+                            carried it. */}
+                        <span
+                          aria-hidden="true"
+                          className="mt-[0.5em] h-2 w-2 shrink-0 border border-accent shadow-[2px_2px_0_0_var(--accent)]"
+                        />
                         <span>{d}</span>
                       </li>
                     ))}
@@ -175,11 +186,11 @@ export default function Home() {
               right now is under <a href="#experience">Experience</a>.
             </p>
           ) : (
-            <div className="space-y-12">
+            <div className="divide-y divide-line [&>*+*]:pt-12">
               {projects.map((p) => (
-                <article key={p.name} className="relative">
+                <article key={p.name} className="relative pb-12 last:pb-0">
                   <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-                    <h3 className="display text-2xl">
+                    <h3 className="display text-[1.7rem] leading-tight sm:text-3xl">
                       <a
                         href={p.href}
                         target="_blank"
@@ -206,10 +217,12 @@ export default function Home() {
         </Section>
 
         <Section id="how-i-work" title="How I work">
-          <div className="space-y-10">
+          <div className="space-y-10 lg:space-y-16">
             {principles.map((pr) => (
               <article key={pr.title}>
-                <h3 className="display text-2xl">{pr.title}</h3>
+                <h3 className="display text-[1.7rem] leading-tight sm:text-3xl">
+                  {pr.title}
+                </h3>
                 <p className="prose mt-3">{pr.body}</p>
               </article>
             ))}
@@ -228,7 +241,9 @@ export default function Home() {
                   itemClassName="stack-item raised flex items-center gap-2.5 border border-line p-2.5 text-sm"
                   items={group.items.map((item) => ({
                     key: item,
-                    mark: hasMark(item) ? <BrandMark name={item} size={18} /> : undefined,
+                    mark: hasMark(item) ? (
+                      <BrandMark name={item} size={18} />
+                    ) : undefined,
                     node: (
                       /* 18px mark + 10px gap — keeps markless items on the
                          same text column as the rest of the grid. */
