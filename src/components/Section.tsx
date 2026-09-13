@@ -23,8 +23,8 @@ export function Section({
 }) {
   const reduceMotion = useReducedMotion();
   // Flips once when the section reaches the viewport; CSS keys the heading's
-  // highlighter sweep off it. Also fires under reduced motion, where the
-  // sweep rules are inert and the marker just sits at rest.
+  // signal-line sweep off it. Also fires under reduced motion, where the line
+  // is already at rest.
   const [seen, setSeen] = useState(false);
 
   const sectionVariants = {
@@ -33,7 +33,12 @@ export function Section({
   };
 
   const headingVariants = {
-    hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 },
+    hidden: reduceMotion ? { opacity: 1 } : { opacity: 1 },
+    shown: { opacity: 1 },
+  };
+
+  const letterVariants = {
+    hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: "0.65em" },
     shown: { opacity: 1, y: 0 },
   };
 
@@ -47,7 +52,7 @@ export function Section({
       id={id}
       aria-labelledby={`${id}-heading`}
       className={`section-anchor border-b border-line py-16 last:border-b-0 md:py-20 ${
-        seen ? "marker-shown" : ""
+        seen ? "heading-shown" : ""
       }`}
     >
       <motion.div
@@ -62,9 +67,25 @@ export function Section({
           id={`${id}-heading`}
           className="section-heading display uppercase mb-10 lg:mb-12 text-[clamp(2.4rem,3.6vw,2.75rem)] leading-[1.1]"
           variants={headingVariants}
-          transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+          transition={
+            reduceMotion
+              ? undefined
+              : {
+                  staggerChildren: 0.035,
+                  delayChildren: 0.08,
+                }
+          }
         >
-          {title}
+          {Array.from(title).map((character, index) => (
+            <motion.span
+              key={`${character}-${index}`}
+              className="inline-block"
+              variants={letterVariants}
+              transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {character === " " ? "\u00a0" : character}
+            </motion.span>
+          ))}
         </motion.h2>
         <motion.div
           variants={contentVariants}

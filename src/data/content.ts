@@ -39,7 +39,7 @@ export const nav = [
   {
     group: "About",
     items: [
-      { id: "how-i-work", label: "How I work" },
+      { id: "how-i-work", label: "Approach" },
       { id: "stack", label: "Stack" },
       { id: "contact", label: "Contact" },
     ],
@@ -61,16 +61,22 @@ export const about = {
  *  with content like this — prose that isn't just a list of nouns. */
 export const principles = [
   {
-    title: "Pick the lightest tool that holds",
-    body: "A marketing site does not need hydration. Astro ships zero JS by default and HTMX covers most of what's left; reaching for Next.js is a decision that should be justified by something, not assumed.",
+    title: "The seam is the job",
+    description:
+      "Placeholder principle copy. Describe how you approach the space between design intent, real data, and implementation details.",
+    body: "Placeholder principle copy. Describe how you approach the space between design intent, real data, and implementation details.",
   },
   {
-    title: "The seam is the job",
+    title: "Pick the lightest tool that holds",
+    description:
+      "Placeholder principle copy. Explain how you choose the smallest, clearest technical solution that genuinely fits the problem.",
     body: "Handoff is where quality leaks. Loading states, empty states, error states, and long strings are all design problems that only show up in code — so they're mine to solve, not somebody else's to spec.",
   },
   {
     title: "Write code you'd be happy to inherit",
-    body: "Optimise for the person reading this at 3am eight months from now. That usually means fewer abstractions than feel clever at the time.",
+    description:
+      "Placeholder principle copy. Add your perspective on clarity, maintainability, and making future changes straightforward.",
+    body: "Placeholder principle copy. Add your perspective on clarity, maintainability, and making future changes straightforward.",
   },
 ];
 
@@ -117,7 +123,8 @@ export const experience: Role[] = [
 export type Project = {
   name: string;
   year: string;
-  blurb: string;
+  category: string;
+  imageLabel: string;
   detail: string;
   tags: string[];
   href: string;
@@ -135,31 +142,34 @@ export type Project = {
  */
 export const projects: Project[] = [
   {
-    name: "Driftwood",
+    name: "Project One",
     year: "2025",
-    blurb: "Local-first terminal journal with end-to-end encrypted sync.",
+    category: "Full-stack web app",
+    imageLabel: "Project One interface preview",
     detail:
-      "A TUI journal that keeps everything on disk first and syncs encrypted blobs between devices, so there's no server that can read your entries.",
-    tags: ["Rust", "SQLite", "TUI"],
-    href: "https://github.com",
+      "Placeholder case-study copy. Summarise the problem, your role, and the most meaningful technical or product decision here.",
+    tags: ["Next.js", "TypeScript", "Tailwind"],
+    href: "#",
   },
   {
-    name: "Halftone",
+    name: "Project Two",
     year: "2024",
-    blurb: "Open-source WebGL playground for dithering and halftone shaders.",
+    category: "Design system",
+    imageLabel: "Project Two interface preview",
     detail:
-      "A browser playground for experimenting with dithering and halftone shaders, with live parameter tweaking and PNG export.",
-    tags: ["WebGL", "GLSL", "TypeScript"],
-    href: "https://github.com",
+      "Placeholder case-study copy. Use this space to explain the outcome, the constraints you worked within, and what you learned.",
+    tags: ["React", "Storybook", "CSS"],
+    href: "#",
   },
   {
-    name: "Cronwig",
+    name: "Project Three",
     year: "2024",
-    blurb: "Zero-dependency cron parser that explains any expression in 3kb.",
+    category: "Developer tool",
+    imageLabel: "Project Three interface preview",
     detail:
-      "Parses a cron expression and renders it as plain English. No dependencies, 3kb minified, works in both Node and the browser.",
-    tags: ["TypeScript", "Zero-dep"],
-    href: "https://github.com",
+      "Placeholder case-study copy. Highlight the key interaction, system decision, or measurable result once the project is ready.",
+    tags: ["Node.js", "TypeScript", "Vitest"],
+    href: "#",
   },
 ];
 

@@ -17,7 +17,8 @@
    [data-theme] on <html> by the no-flash script in layout.tsx.
 ----------------------------------------------------------------- */
 :root {
-  --background: #fbfbfc; /* cool near-white, a hair off #fff */
+  --background: #ffffff; /* clean white page ground */
+  --prose: #3b3e45; /* supporting descriptions */
   --surface: #f0f1f3; /* sidebar + chips */
   --foreground: #101113; /* 18.3:1 — this is what body copy uses */
   --muted: #54575e; /* 7.0:1 — metadata only, never body copy */
@@ -37,11 +38,11 @@
 }
 
 :root[data-theme="dark"] {
-  /* Ground dropped from #0C0D0F so the page reads as unlit rather than
-     dark-grey; --surface inherits that old value, which puts the sidebar at
-     the shade the active nav item used to sit at. */
-  --background: #030304;
-  --surface: #070809;
+  --prose: #c8cbd1; /* supporting descriptions */
+  /* A lifted charcoal ground keeps dark mode calm and preserves a distinct
+     but quiet surface for the sidebar and controls. */
+  --background: #0d0e10;
+  --surface: #15171b;
   --foreground: #e9eaec; /* 16.2:1 */
   --muted: #969aa3; /* 6.9:1 */
   --accent: #5e8aff; /* 6.4:1 — lifted for the dark ground, same blue as --chart-3 */
@@ -58,6 +59,7 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-prose: var(--prose);
   --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -101,79 +103,29 @@
     position: relative;
     display: inline-block;
     isolation: isolate;
-    padding: 0 0.12em;
+    padding-bottom: 0.2em;
   }
 
   .section-heading::before {
     content: "";
     position: absolute;
-    left: -0.16em;
-    right: -0.24em;
-    top: 0.26em;
-    bottom: 0.02em;
-    z-index: -1;
+    width: 0.32rem;
+    height: 0.32rem;
+    right: -0.62rem;
+    bottom: 0.1em;
     pointer-events: none;
-    transform: rotate(-1.2deg);
-    background: linear-gradient(
-      98deg,
-      color-mix(in srgb, var(--accent) 32%, transparent) 0%,
-      color-mix(in srgb, var(--accent) 19%, transparent) 18%,
-      color-mix(in srgb, var(--accent) 29%, transparent) 44%,
-      color-mix(in srgb, var(--accent) 16%, transparent) 68%,
-      color-mix(in srgb, var(--accent) 27%, transparent) 88%,
-      color-mix(in srgb, var(--accent) 12%, transparent) 100%
-    );
-    clip-path: polygon(
-      2% 14%,
-      14% 5%,
-      31% 11%,
-      48% 4%,
-      66% 10%,
-      82% 5%,
-      95% 12%,
-      100% 27%,
-      99% 73%,
-      92% 93%,
-      77% 87%,
-      59% 96%,
-      41% 88%,
-      24% 97%,
-      10% 90%,
-      0% 96%,
-      1% 46%
-    );
+    background: var(--accent);
   }
 
   .section-heading::after {
     content: "";
     position: absolute;
-    left: -0.1em;
-    right: -0.3em;
-    top: 0.12em;
-    bottom: 0.6em;
-    z-index: -1;
+    left: 0;
+    width: 100%;
+    bottom: 0.18em;
+    height: 0.14rem;
     pointer-events: none;
-    transform: rotate(-1.9deg);
-    background: linear-gradient(
-      94deg,
-      color-mix(in srgb, var(--accent) 29%, transparent) 0%,
-      color-mix(in srgb, var(--accent) 20%, transparent) 38%,
-      color-mix(in srgb, var(--accent) 27%, transparent) 71%,
-      color-mix(in srgb, var(--accent) 16%, transparent) 100%
-    );
-    clip-path: polygon(
-      3% 20%,
-      27% 6%,
-      54% 17%,
-      78% 5%,
-      97% 19%,
-      100% 61%,
-      88% 89%,
-      63% 96%,
-      36% 84%,
-      12% 95%,
-      0% 77%
-    );
+    background: var(--accent);
   }
 
   /* ---- Marker draw-in ----
@@ -187,22 +139,26 @@
      the marker simply sits at rest. scaleX(1) is the identity, so the resting
      transforms here match the base rules exactly. */
   @media (prefers-reduced-motion: no-preference) {
-    .section-heading::before,
     .section-heading::after {
-      transform-origin: 0 50%;
-      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.72s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    section:not(.marker-shown) .section-heading::before {
-      transform: rotate(-1.2deg) scaleX(0);
+    .section-heading::before {
+      transition: opacity 0.16s ease, transform 0.16s ease;
     }
-    section:not(.marker-shown) .section-heading::after {
-      transform: rotate(-1.9deg) scaleX(0);
+    section:not(.heading-shown) .section-heading::after {
+      clip-path: inset(0 100% 0 0);
     }
-    .marker-shown .section-heading::before {
-      transition-delay: 0.35s;
+    section:not(.heading-shown) .section-heading::before {
+      opacity: 0;
+      transform: scale(0.5);
     }
-    .marker-shown .section-heading::after {
-      transition-delay: 0.5s;
+    .heading-shown .section-heading::after {
+      clip-path: inset(0 0 0 0);
+      transition-delay: 0.52s;
+    }
+    .heading-shown .section-heading::before {
+      transition-delay: 0.68s;
     }
   }
 }
@@ -270,6 +226,109 @@ body::after {
   background-size: 160px 160px;
 }
 
+/* ---- Rocket field ----
+   One small signature detail crosses the margins, then disappears before it
+   can compete with the reading flow. */
+.rocket-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.rocket {
+  color: color-mix(in srgb, var(--accent) 58%, transparent);
+  position: absolute;
+  top: 0;
+  right: 4%;
+  width: 4rem;
+  height: 7rem;
+  will-change: transform, opacity;
+}
+
+.rocket svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rocket-shell {
+  fill: var(--background);
+  fill-opacity: 0.88;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+
+.rocket-fin,
+.rocket-window,
+.rocket-highlight {
+  fill: color-mix(in srgb, var(--accent) 8%, transparent);
+  stroke: currentColor;
+  stroke-width: 1.1;
+}
+
+.rocket-window {
+  fill: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.rocket-highlight {
+  fill: none;
+  opacity: 0.55;
+}
+
+.rocket-flame {
+  fill: color-mix(in srgb, var(--accent) 16%, transparent);
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.rocket-smoke {
+  fill: none;
+  stroke: currentColor;
+  stroke-dasharray: 1 3;
+  stroke-linecap: round;
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
+.rocket-stage {
+  position: absolute;
+  top: 43%;
+  right: calc(4% + 1.55rem);
+  width: 0.8rem;
+  height: 1.3rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  border-radius: 0.2rem 0.2rem 0.5rem 0.5rem;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  transform: rotate(8deg);
+  will-change: transform, opacity;
+}
+
+:root[data-theme="dark"] .rocket {
+  filter: brightness(1.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rocket,
+  .rocket-stage {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .rocket {
+    right: 1rem;
+    width: 3.5rem;
+    height: 6.25rem;
+  }
+
+  .rocket-stage {
+    right: 2.35rem;
+  }
+}
+
 /* Page chrome only. Unscoped, this also stripped the scrollbar from the
    contribution graph's overflow-x container — the sole cue that 53 weeks of
    cells scroll sideways on a phone. `scrollbar-width` covers Firefox, which
@@ -329,6 +388,16 @@ body::-webkit-scrollbar {
    which almost always runs its text too wide. */
 .prose {
   max-width: 68ch;
+}
+
+/* Descriptions sit below headings and interactive text without falling all
+   the way back to metadata grey. The overview display lede opts back in. */
+.prose p {
+  color: var(--prose);
+}
+
+.prose .display {
+  color: var(--foreground);
 }
 
 .prose p + p {

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 // Sets data-theme on <html> before first paint so there's no flash of the
 // wrong mode. Inline because it must run ahead of hydration — React state
 // can't execute early enough.
-const noFlashThemeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();`;
+const noFlashThemeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);if(!window.location.hash){history.scrollRestoration="manual";var h=document.documentElement;var s=h.style.scrollBehavior;h.style.scrollBehavior="auto";window.scrollTo(0,0);requestAnimationFrame(function(){h.style.scrollBehavior=s;});}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
