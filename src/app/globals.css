@@ -227,105 +227,167 @@ body::after {
 }
 
 /* ---- Rocket field ----
-   One small signature detail crosses the margins, then disappears before it
-   can compete with the reading flow. */
+   A blueprint of a rocket on a launch pad in the right margin; it climbs with
+   the scroll, sheds two side boosters and leaves line-drawn exhaust clouds.
+   Rendered only at >=1280px (see RocketBackground.tsx), where the margin
+   beside the column is empty. Everything is accent-blue line work over the
+   page ground, so it follows the theme. */
 .rocket-field {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  color: var(--accent);
 }
 
-.rocket {
-  color: color-mix(in srgb, var(--accent) 58%, transparent);
-  position: absolute;
-  top: 0;
-  right: 4%;
-  width: 4rem;
-  height: 7rem;
-  will-change: transform, opacity;
-}
-
-.rocket svg {
+.rocket-field svg {
   display: block;
   width: 100%;
-  height: 100%;
   overflow: visible;
 }
 
-.rocket-shell {
-  fill: var(--background);
-  fill-opacity: 0.88;
-  stroke: currentColor;
-  stroke-width: 1.25;
-}
-
-.rocket-fin,
-.rocket-window,
-.rocket-highlight {
-  fill: color-mix(in srgb, var(--accent) 8%, transparent);
-  stroke: currentColor;
-  stroke-width: 1.1;
-}
-
-.rocket-window {
-  fill: color-mix(in srgb, var(--accent) 22%, transparent);
-}
-
-.rocket-highlight {
-  fill: none;
-  opacity: 0.55;
-}
-
-.rocket-flame {
-  fill: color-mix(in srgb, var(--accent) 16%, transparent);
-  stroke: currentColor;
-  stroke-width: 1;
-}
-
-.rocket-smoke {
-  fill: none;
-  stroke: currentColor;
-  stroke-dasharray: 1 3;
-  stroke-linecap: round;
-  stroke-width: 1;
-  opacity: 0.55;
-}
-
-.rocket-stage {
+.rocket-clouds {
   position: absolute;
-  top: 43%;
-  right: calc(4% + 1.55rem);
-  width: 0.8rem;
-  height: 1.3rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
-  border-radius: 0.2rem 0.2rem 0.5rem 0.5rem;
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  transform: rotate(8deg);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.75;
+}
+
+.rocket-pad {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 0;
+  width: 7rem;
+}
+
+.rocket {
+  position: absolute;
+  right: 3.5rem;
+  bottom: 1.2rem;
+  width: 1.4rem;
   will-change: transform, opacity;
 }
 
-:root[data-theme="dark"] .rocket {
-  filter: brightness(1.15);
+.rocket-booster {
+  position: absolute;
+  top: 30.77%; /* core unit 40 of 130 */
+  width: 41.67%; /* 10 of 24 units */
+  transform-origin: 50% 30%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .rocket,
-  .rocket-stage {
-    display: none;
+.rocket-booster-left {
+  left: -37.5%;
+}
+
+.rocket-booster-right {
+  right: -37.5%;
+}
+
+/* Parts are filled with the page ground so they occlude the clouds and
+   whatever is drawn behind them, the way ink on paper would. */
+.rk-part,
+.rk-line {
+  stroke: currentColor;
+  stroke-width: 1px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.rk-part {
+  fill: var(--background);
+}
+
+.rk-line {
+  fill: none;
+}
+
+.rk-hatch {
+  fill: url(#rk-hatch);
+}
+
+.rk-hatch-line {
+  stroke: currentColor;
+  stroke-width: 0.35;
+  opacity: 0.55;
+}
+
+.rk-grid-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.15;
+  opacity: 0.35;
+}
+
+.rk-faint {
+  opacity: 0.5;
+}
+
+.rk-center {
+  stroke-dasharray: 6 2 1 2; /* drafting centre line: long, gap, dot, gap */
+  opacity: 0.45;
+}
+
+.rk-label {
+  fill: currentColor;
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 3.2px;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+.rk-beacon {
+  fill: currentColor;
+  animation: rocket-beacon 1.6s steps(1) infinite;
+}
+
+.rocket-flame {
+  position: absolute;
+  top: 100%;
+  aspect-ratio: 24 / 80;
+  transform-origin: 50% 0;
+}
+
+.rocket-flame svg {
+  height: 100%;
+}
+
+.rocket-flame-core {
+  left: 10%;
+  width: 80%;
+}
+
+.rocket-flame-booster {
+  left: -6.5%;
+  width: 113%;
+}
+
+.rocket-flame-flicker {
+  transform-box: view-box;
+  transform-origin: 50% 0;
+  animation: rocket-flicker 0.16s linear infinite;
+}
+
+@keyframes rocket-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(0.94, 1.07);
+  }
+  50% {
+    transform: scale(1.04, 0.92);
+  }
+  75% {
+    transform: scale(0.97, 1.04);
   }
 }
 
-@media (max-width: 767px) {
-  .rocket {
-    right: 1rem;
-    width: 3.5rem;
-    height: 6.25rem;
-  }
-
-  .rocket-stage {
-    right: 2.35rem;
+@keyframes rocket-beacon {
+  50% {
+    opacity: 0.2;
   }
 }
 
